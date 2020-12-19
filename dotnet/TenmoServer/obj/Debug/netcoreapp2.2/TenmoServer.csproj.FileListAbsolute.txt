@@ -1,0 +1,17 @@
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\bin\Debug\netcoreapp2.2\appsettings.Development.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\bin\Debug\netcoreapp2.2\appsettings.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\bin\Debug\netcoreapp2.2\TenmoServer.deps.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\bin\Debug\netcoreapp2.2\TenmoServer.runtimeconfig.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\bin\Debug\netcoreapp2.2\TenmoServer.runtimeconfig.dev.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\bin\Debug\netcoreapp2.2\TenmoServer.dll
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\bin\Debug\netcoreapp2.2\TenmoServer.pdb
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.csprojAssemblyReference.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.AssemblyInfoInputs.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.AssemblyInfo.cs
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.csproj.CoreCompileInputs.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.RazorAssemblyInfo.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.RazorAssemblyInfo.cs
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.RazorTargetAssemblyInfo.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.dll
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.pdb
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoServer\obj\Debug\netcoreapp2.2\TenmoServer.genruntimeconfig.cache

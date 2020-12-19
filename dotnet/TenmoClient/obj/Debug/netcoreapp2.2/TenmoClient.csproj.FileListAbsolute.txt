@@ -1,0 +1,12 @@
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\bin\Debug\netcoreapp2.2\TenmoClient.deps.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\bin\Debug\netcoreapp2.2\TenmoClient.runtimeconfig.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\bin\Debug\netcoreapp2.2\TenmoClient.runtimeconfig.dev.json
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\bin\Debug\netcoreapp2.2\TenmoClient.dll
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\bin\Debug\netcoreapp2.2\TenmoClient.pdb
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\obj\Debug\netcoreapp2.2\TenmoClient.csprojAssemblyReference.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\obj\Debug\netcoreapp2.2\TenmoClient.AssemblyInfoInputs.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\obj\Debug\netcoreapp2.2\TenmoClient.AssemblyInfo.cs
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\obj\Debug\netcoreapp2.2\TenmoClient.csproj.CoreCompileInputs.cache
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\obj\Debug\netcoreapp2.2\TenmoClient.dll
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\obj\Debug\netcoreapp2.2\TenmoClient.pdb
+C:\Users\ericm\OneDrive\Documents\GitHub\Tenmo_project\dotnet\TenmoClient\obj\Debug\netcoreapp2.2\TenmoClient.genruntimeconfig.cache
