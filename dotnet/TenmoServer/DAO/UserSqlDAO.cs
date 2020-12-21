@@ -32,7 +32,8 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT user_id, username, password_hash, salt FROM users WHERE username = @userName", conn);
+                    SqlCommand cmd = new SqlCommand(@"SELECT user_id, username, password_hash, salt 
+                                                    FROM users WHERE username = @userName", conn);
                     cmd.Parameters.AddWithValue("@userName", userName);
                     SqlDataReader reader = cmd.ExecuteReader();
 

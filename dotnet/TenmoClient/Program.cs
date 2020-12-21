@@ -171,17 +171,28 @@ namespace TenmoClient
                 {
 
                     //Get list of users
+                    Console.WriteLine(UserService.GetUserName());
                     List<User> users =  api.GetUsers();
+                    //remove current user from list of potential recipients
+                    users.RemoveAt(UserService.GetUserId() - 1);
 
-                    string recipient = MenuSelectionOptions(users);
-                    User recipientUser = api.GetUser(recipient);
+                    int recipient = MenuSelectionOptions(users);
+                    if (recipient == 0)
+                    {
+                        Console.WriteLine("transfer canceled");
+                        menuSelection = -1;
+                    }
+                    else
+                    {
+                        User recipientUser = api.GetUser(users[recipient-1].Username);
 
-                    Console.Write("Please enter the amount to transfer: ");
-                    decimal amountToSend = decimal.Parse(Console.ReadLine());
+                        Console.Write("Please enter the amount to transfer: ");
+                        decimal amountToSend = decimal.Parse(Console.ReadLine());
 
-                    api.SendTeBucks(amountToSend, recipientUser.UserId);
-                    //input user to send bucks to
-                    //run transfer method
+                        api.SendTeBucks(amountToSend, recipientUser.UserId);
+                        //input user to send bucks to
+                        //run transfer method
+                    }
                 }
                 else if (menuSelection == 5)
                 {
@@ -201,19 +212,30 @@ namespace TenmoClient
             }
         }
 
-        private static string MenuSelectionOptions(List<User> users)
+        private static int MenuSelectionOptions(List<User> users)
         {
 
             int i = 1;
+            int selectedUser = -1;
 
-            Console.WriteLine("\nPlease select who you would like to transfer to: \n");
-            foreach (User user in users)
+            while (selectedUser < 0 || selectedUser > users.Count)
             {
-                Console.WriteLine("\t" + i++ + ". " + user.Username);
+                Console.WriteLine("\nPlease select who you would like to transfer to: \n");
+                foreach (User user in users)
+                {
+                    Console.WriteLine("\t" + i++ + ". " + user.Username);
+                }
+                selectedUser = int.Parse(Console.ReadLine());
+                i = 1;
             }
-
-            int selecteduser =int.Parse( Console.ReadLine());
-            return users[selecteduser - 1].Username;
+            if (selectedUser == 0)
+            {
+                return 0;
+            } else
+            {
+                return users[selectedUser - 1].UserId;
+            }
+            
         }
 
         //Transfer fund method is incorrectly 

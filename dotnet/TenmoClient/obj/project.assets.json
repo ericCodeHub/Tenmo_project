@@ -714,7 +714,8 @@
   },
   "packageFolders": {
     "C:\\Users\\ericm\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
@@ -726,7 +727,8 @@
       "outputPath": "C:\\Users\\ericm\\OneDrive\\Documents\\GitHub\\Tenmo_project\\dotnet\\TenmoClient\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
+        "C:\\Microsoft\\Xamarin\\NuGet\\",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
         "C:\\Users\\ericm\\AppData\\Roaming\\NuGet\\NuGet.Config",
