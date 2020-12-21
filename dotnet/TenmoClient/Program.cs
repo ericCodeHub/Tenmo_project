@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using TenmoClient.Data;
+using System.Linq;
 
 namespace TenmoClient
 {
@@ -89,63 +90,42 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 1)
                 {
-                    Console.WriteLine(api.GetBalance());
+                    
+                    Console.WriteLine(string.Format("{0:C}", api.GetBalance()));
                 }
                 else if (menuSelection == 2)
                 {
                     List<Transfer> list = api.ShowTransfers();
 
-                    /*
-                     *  -------------------------------------------
-                        Transfers
-                        ID          From/To                 Amount
-                        -------------------------------------------
-                    */
-                    Console.WriteLine("-------------------------------------------");
-                    Console.WriteLine("Transfers");
-                    Console.WriteLine("ID\tFrom/To\t\tAmount");
-                    Console.WriteLine("-------------------------------------------");
-
-
-                    foreach (Transfer item in list)
+                    
+                    
+                    int transferId = -1;
+                    while (transferId < 0)
                     {
-
-                        string transferDetail = "";
-                        if (item.TransferTypeId == 1)
+                        Console.WriteLine(ShowUserTransfers(list));
+                        Console.WriteLine("\nEnter Transfer ID to see more details or 0 to return to main Menu: ");
+                        try
                         {
-                            if (item.AccountFrom == UserService.GetUserId())
-                            {
-                                transferDetail = "To: " + item.AccountToName;
-                            }
-                            else
-                            {
-                                transferDetail = "From: " + item.AccountFromName;
-                            };
+                            transferId = int.Parse(Console.ReadLine());
+                        }
+                        catch
+                        {
+                            transferId = -1;
+                        }
+                        if (transferId == 0)
+                        {
+                            menuSelection = -1;
+                        }
+                        else if (!list.Any(x => x.TransferId == transferId))
+                        {
+                            transferId = -1;
+
                         }
                         else
                         {
-                            if (item.TransferTypeId == 2)
-                            {
-                                if (item.AccountTo == UserService.GetUserId())
-                                {
-                                    transferDetail = "To: " + item.AccountToName;
-                                }
-                                else
-                                {
-                                    transferDetail = "From: " + item.AccountFromName; 
-                                }
-                            }
-                        }
+                            Transfer transfer = api.ShowTransfer(transferId);
 
-
-                            Console.WriteLine(item.TransferId + "\t" + transferDetail + "\t" + item.Amount);
-                        //(item.TransferTypeId == 1 ? (item.AccountFromName != "eric" ? "From: " + item.AccountFromName : "From: " + item.AccountToName) : (item.AccountFromName != "eric" ? "To: " + item.AccountFromName : "To: " + item.AccountToName))
-                        
-                    }
-                    Console.Write("\nEnter Transfer ID to see more details: ");
-                    int transferId = int.Parse(Console.ReadLine());
-                    Transfer transfer = api.ShowTransfer(transferId);
-                    /*--------------------------------------------
+                            /*--------------------------------------------
                     Transfer Details
                     --------------------------------------------
                         Id: 23
@@ -155,12 +135,18 @@ namespace TenmoClient
                         Status: Approved
                         Amount: $903.14*/
 
-                    Console.WriteLine("\n--------------------------------------------");
-                    Console.WriteLine("Transfer Details");
-                    Console.WriteLine("--------------------------------------------");
-                    Console.WriteLine("\tId: " + transfer.TransferId + "\n\tFrom: " + transfer.AccountFromName + 
-                                      "\n\tTo: " + transfer.AccountToName + "\n\tType: " + transfer.TransferTypeId + 
-                                      "\n\tStatus: " + transfer.TransferStatusName + "\n\tAmount: " + transfer.Amount);
+                            Console.WriteLine("\n--------------------------------------------");
+                            Console.WriteLine("Transfer Details");
+                            Console.WriteLine("--------------------------------------------");
+                            Console.WriteLine($"\tId: {transfer.TransferId}\n\tFrom: {transfer.AccountFromName}" +
+                                              $"\n\tTo: {transfer.AccountToName}\n\tType: {transfer.TransferTypeId}" +
+                                              $"\n\tStatus: {transfer.TransferStatusName}\n\tAmount: {transfer.Amount:C}");
+                            transferId = -1;
+                        }
+                    }
+
+
+
 
                 }
                 else if (menuSelection == 3)
@@ -210,6 +196,60 @@ namespace TenmoClient
                     Environment.Exit(0);
                 }
             }
+        }
+
+        private static string ShowUserTransfers(List<Transfer> list)
+        {
+            /*
+                -------------------------------------------
+                Transfers
+                ID          From/To                 Amount
+                -------------------------------------------
+            */
+            string userListOfTransfers;
+
+            userListOfTransfers = "-------------------------------------------\n";
+            userListOfTransfers += "Transfers\n";
+            userListOfTransfers += $"ID\t{"From/To",-20}Amount\n";
+            userListOfTransfers += "-------------------------------------------\n";
+
+
+            foreach (Transfer item in list)
+            {
+
+                string transferDetail = "";
+                if (item.TransferTypeId == 1)
+                {
+                    if (item.AccountFrom == UserService.GetUserId())
+                    {
+                        transferDetail = "To: " + item.AccountToName;
+                    }
+                    else
+                    {
+                        transferDetail = "From: " + item.AccountFromName;
+                    };
+                }
+                else
+                {
+                    if (item.TransferTypeId == 2)
+                    {
+                        if (item.AccountTo == UserService.GetUserId())
+                        {
+                            transferDetail = "To: " + item.AccountToName;
+                        }
+                        else
+                        {
+                            transferDetail = "From: " + item.AccountFromName;
+                        }
+                    }
+                }
+
+                userListOfTransfers += $"{ item.TransferId}\t{ transferDetail,-20}{item.Amount:C}\n";
+                //Console.WriteLine("${ item.TransferId}\t{ transferDetail,20}{ item.Amount}");
+                //(item.TransferTypeId == 1 ? (item.AccountFromName != "eric" ? "From: " + item.AccountFromName : "From: " + item.AccountToName) : (item.AccountFromName != "eric" ? "To: " + item.AccountFromName : "To: " + item.AccountToName))
+                
+            }
+            return userListOfTransfers;
         }
 
         private static int MenuSelectionOptions(List<User> users)
