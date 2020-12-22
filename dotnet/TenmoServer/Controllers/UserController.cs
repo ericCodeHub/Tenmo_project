@@ -62,36 +62,52 @@ namespace TenmoServer.Controllers
         {
             return userDao.GetTransfer(transferId);
         }
-
-
         [HttpPut("/user/{transactionAmount}/{recipient}")]
         public ActionResult<decimal> TransferFunds(decimal transactionAmount, int recipient)
         {
-            
+
             int transactionType = 1;
             int transferStatusID = 2;
             decimal currBalance = GetUserBalance();
-            if (transactionAmount < 0)
+
+            if (currBalance < Math.Abs(transactionAmount))
             {
-                if (currBalance < Math.Abs(transactionAmount))
-                {
-                    return BadRequest("Insufficient funds.");
-                    transferStatusID = 3;
-                }
-                transactionType = 2;
+                transferStatusID = 3;
+                return BadRequest("Insufficient funds.");
+
             }
+            transactionType = 2;          
             
-
-            //User existing = GetUser(userName);
-            //if (existing == null)
-            //{
-            //    return NotFound("User doesn't exist.");
-                
-            //}
-
             decimal result = userDao.TransferFunds(transactionAmount, GetCurrentUserId(), recipient);
+            
+            
             userDao.AddTransfer(Math.Abs(transactionAmount), transactionType, transferStatusID, GetCurrentUserId(), recipient);
             return Ok(result);
         }
+        [HttpPut("/user/request/{transactionAmount}/{sender}")]
+        public ActionResult<bool> RequestFunds(decimal transactionAmount, int sender)
+        {
+
+            int transactionType = 1;//1=request; 2=send
+            int transferStatusID = 1;//1=pending; 2=approved; 3=rejected
+            //decimal currBalance = GetUserBalance();
+
+            /*if (currBalance < Math.Abs(transactionAmount))
+            {
+                transferStatusID = 3;
+                return BadRequest("Insufficient funds.");
+
+            }
+            transactionType = 2;
+
+            //bool result = userDao.TransferFunds(transactionAmount, GetCurrentUserId(), recipient);
+            */
+
+            bool result = userDao.AddTransfer(Math.Abs(transactionAmount), transactionType, transferStatusID, GetCurrentUserId(), sender);
+            return Ok(result);
+        }
+
+
+
     }
 }

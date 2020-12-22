@@ -11,7 +11,6 @@ namespace TenmoServer.DAO
         List<User> GetUsers();
 
         decimal GetCurrentBalance(int userId);
-        
 
         decimal TransferFunds(decimal transactionAmount, int currentUserId, int recipient);
         bool AddTransfer(decimal transferAmount, int transfer_type_id, int transfer_status_id, int account_from, int account_to);

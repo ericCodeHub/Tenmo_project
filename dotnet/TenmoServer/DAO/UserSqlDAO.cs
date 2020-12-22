@@ -16,6 +16,7 @@ namespace TenmoServer.DAO
         public decimal CurrentBalance { get; set; }
         public decimal RecipientBalance { get; set; }
 
+
         public UserSqlDAO(string dbConnectionString)
         {
             CurrentBalance = startingBalance;
@@ -151,11 +152,34 @@ namespace TenmoServer.DAO
             }
             return balance;
         }
+        /*public bool RequestTransfer(decimal transactionAmount, int currentUserId, int sender)
+        {
+            int result;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
 
+                    SqlCommand cmd = new SqlCommand(@"INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) 
+                                                    VALUES(@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount)", conn);
+                    cmd.Parameters.AddWithValue("@transfer_type_id", transfer_type_id);
+                    cmd.Parameters.AddWithValue("@transfer_status_id", transfer_status_id);
+                    cmd.Parameters.AddWithValue("@account_from", account_from);
+                    cmd.Parameters.AddWithValue("@account_to", account_to);
+                    cmd.Parameters.AddWithValue("@amount", transferAmount);
+
+                    result = cmd.ExecuteNonQuery();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return result > 0;
+        }*/
         public decimal TransferFunds(decimal transactionAmount, int currentUserId, int recipient)
         {
-
-
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))

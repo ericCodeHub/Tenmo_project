@@ -44,6 +44,7 @@ namespace TenmoClient
             }
             return null;
         }
+
         public List<User> GetUsers()
         {
             client.Authenticator = new JwtAuthenticator(UserService.GetToken());
@@ -117,7 +118,23 @@ namespace TenmoClient
         public Transfer SendTeBucks(decimal transactionAmount, int recipient)
         {
             client.Authenticator=new JwtAuthenticator(UserService.GetToken());
-            RestRequest request = new RestRequest(API_URL + "user/" + transactionAmount + "/" + recipient);
+            RestRequest request = new RestRequest($"{API_URL}user/{transactionAmount}/{recipient}");
+            IRestResponse<Transfer> response = client.Put<Transfer>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                ProcessErrorResponse(response);
+            }
+            else
+            {
+                return response.Data;
+            }
+            return null;
+        }
+
+        public Transfer RequestTeBucks(decimal transactionAmount, int sender)
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest($"{API_URL}user/request/{transactionAmount}/{sender}");
             IRestResponse<Transfer> response = client.Put<Transfer>(request);
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
