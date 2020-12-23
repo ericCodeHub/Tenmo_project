@@ -66,7 +66,7 @@ namespace TenmoServer.Controllers
         public ActionResult<decimal> TransferFunds(decimal transactionAmount, int recipient)
         {
 
-            int transactionType = 1;
+            int transactionType;
             int transferStatusID = 2;
             decimal currBalance = GetUserBalance();
 
@@ -90,18 +90,7 @@ namespace TenmoServer.Controllers
 
             int transactionType = 1;//1=request; 2=send
             int transferStatusID = 1;//1=pending; 2=approved; 3=rejected
-            //decimal currBalance = GetUserBalance();
-
-            /*if (currBalance < Math.Abs(transactionAmount))
-            {
-                transferStatusID = 3;
-                return BadRequest("Insufficient funds.");
-
-            }
-            transactionType = 2;
-
-            //bool result = userDao.TransferFunds(transactionAmount, GetCurrentUserId(), recipient);
-            */
+            //transfer has not been calculated to balance; needs to be approved first
 
             bool result = userDao.AddTransfer(Math.Abs(transactionAmount), transactionType, transferStatusID, GetCurrentUserId(), sender);
             return Ok(result);

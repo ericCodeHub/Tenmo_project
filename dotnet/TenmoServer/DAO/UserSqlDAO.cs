@@ -234,8 +234,8 @@ namespace TenmoServer.DAO
                                                     VALUES(@transfer_type_id, @transfer_status_id, @account_from, @account_to, @amount)", conn);
                     cmd.Parameters.AddWithValue("@transfer_type_id", transfer_type_id);
                     cmd.Parameters.AddWithValue("@transfer_status_id", transfer_status_id);
-                    cmd.Parameters.AddWithValue("@account_from", account_from);
-                    cmd.Parameters.AddWithValue("@account_to", account_to);
+                    cmd.Parameters.AddWithValue("@account_from", transfer_type_id == 2 ? account_from : account_to);
+                    cmd.Parameters.AddWithValue("@account_to",  transfer_type_id == 2 ? account_to : account_from);
                     cmd.Parameters.AddWithValue("@amount", transferAmount);
 
                     result = cmd.ExecuteNonQuery();

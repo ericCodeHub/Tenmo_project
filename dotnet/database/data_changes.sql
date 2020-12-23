@@ -1,0 +1,3 @@
+--BEGIN TRANSACTION;
+DELETE FROM transfers WHERE transfer_type_id = 1
+--ROLLBACK TRANSACTION;

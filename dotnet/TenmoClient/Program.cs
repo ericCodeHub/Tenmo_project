@@ -93,11 +93,9 @@ namespace TenmoClient
                     
                     Console.WriteLine(string.Format("{0:C}", api.GetBalance()));
                 }
-                else if (menuSelection == 2)
+                else if (menuSelection == 2)//show logged in users transfers
                 {
-                    List<Transfer> list = api.ShowTransfers();
-
-                    
+                    List<Transfer> list = api.ShowTransfers();                    
                     
                     int transferId = -1;
                     while (transferId < 0)
@@ -108,7 +106,7 @@ namespace TenmoClient
                         {
                             transferId = int.Parse(Console.ReadLine());
                         }
-                        catch
+                        catch//if a "non-transfer id" is entered, do this
                         {
                             transferId = -1;
                         }
@@ -149,11 +147,12 @@ namespace TenmoClient
 
 
                 }
-                else if (menuSelection == 3)
+                else if (menuSelection == 3)//view logged in users pending requests
                 {
-
+                    //grab lists of pending requests
+                    //use show transfers model but only show pending transfers instead of all transfers
                 }
-                else if (menuSelection == 4)
+                else if (menuSelection == 4)//send money to other users
                 {
 
                     
@@ -203,7 +202,7 @@ namespace TenmoClient
                         
                     }
                 }
-                else if (menuSelection == 5)
+                else if (menuSelection == 5)//request money from other members
                 {
                     List<User> users = api.GetUsers();
                     //remove current user from list of potential recipients
@@ -254,10 +253,14 @@ namespace TenmoClient
                     UserService.SetLogin(new API_User()); //wipe out previous login info
                     Run(); //return to entry point
                 }
-                else
+                else if (menuSelection == 0)
                 {
                     Console.WriteLine("Goodbye!");
                     Environment.Exit(0);
+                } else
+                {
+                    Console.WriteLine("Please enter a valid menu selection");
+                    menuSelection = -1;
                 }
             }
         }
@@ -274,7 +277,7 @@ namespace TenmoClient
 
             userListOfTransfers = "-------------------------------------------\n";
             userListOfTransfers += "Transfers\n";
-            userListOfTransfers += $"ID\t{"From/To",-20}Amount\n";
+            userListOfTransfers += $"ID\t{"From/To",-25}Amount\n";
             userListOfTransfers += "-------------------------------------------\n";
 
 
@@ -282,33 +285,33 @@ namespace TenmoClient
             {
 
                 string transferDetail = "";
-                if (item.TransferTypeId == 1)
+                if (item.TransferTypeId == 2)//all sent transfers get a 2; requested funds are transfer type 1
                 {
                     if (item.AccountFrom == UserService.GetUserId())
                     {
-                        transferDetail = "To: " + item.AccountToName;
+                        transferDetail = "Sent To: " + item.AccountToName;
                     }
                     else
                     {
-                        transferDetail = "From: " + item.AccountFromName;
+                        transferDetail = "Sent From: " + item.AccountFromName;
                     };
                 }
                 else
                 {
-                    if (item.TransferTypeId == 2)
+                    if (item.TransferTypeId == 1)//this condition represents requested funds both pending and approved
                     {
                         if (item.AccountTo == UserService.GetUserId())
                         {
-                            transferDetail = "To: " + item.AccountToName;
+                            transferDetail = "Req From: " + item.AccountFromName;
                         }
                         else
                         {
-                            transferDetail = "From: " + item.AccountFromName;
+                            transferDetail = "Req By: " + item.AccountToName;
                         }
                     }
                 }
 
-                userListOfTransfers += $"{ item.TransferId}\t{ transferDetail,-20}{item.Amount:C}\n";
+                userListOfTransfers += $"{ item.TransferId}\t{ transferDetail,-25}{item.Amount:C}\n";
                 //Console.WriteLine("${ item.TransferId}\t{ transferDetail,20}{ item.Amount}");
                 //(item.TransferTypeId == 1 ? (item.AccountFromName != "eric" ? "From: " + item.AccountFromName : "From: " + item.AccountToName) : (item.AccountFromName != "eric" ? "To: " + item.AccountFromName : "To: " + item.AccountToName))
                 
