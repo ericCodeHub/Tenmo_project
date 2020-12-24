@@ -1,3 +1,9 @@
 --BEGIN TRANSACTION;
 DELETE FROM transfers WHERE transfer_type_id = 1
 --ROLLBACK TRANSACTION;
+
+BEGIN TRANSACTION;
+UPDATE transfers
+SET transfer_status_id = 1
+WHERE transfer_id = 11
+ROLLBACK TRANSACTION;

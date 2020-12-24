@@ -57,10 +57,20 @@ namespace TenmoServer.Controllers
 
             return userDao.ShowUserTransfers(GetCurrentUserId());
         }
+        [HttpGet("/user/transfers/pending")]
+        public List<Transfer> ShowPendingRequests()
+        {
+            return userDao.ShowUserPendingRequests(GetCurrentUserId());
+        }
         [HttpGet("/user/transfers/{transferId}")]
         public Transfer ShowTransfer(int transferId)
         {
             return userDao.GetTransfer(transferId);
+        }
+        [HttpPut("/user/transfers/{transferId}/{transferStatus}")]
+        public ActionResult<bool> UpdateTransferStatus(int transferId, int transferStatus)
+        {
+            return userDao.UpdateTransferStatus(transferId, transferStatus);
         }
         [HttpPut("/user/{transactionAmount}/{recipient}")]
         public ActionResult<decimal> TransferFunds(decimal transactionAmount, int recipient)

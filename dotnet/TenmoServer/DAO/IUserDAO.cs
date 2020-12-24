@@ -15,7 +15,9 @@ namespace TenmoServer.DAO
         decimal TransferFunds(decimal transactionAmount, int currentUserId, int recipient);
         bool AddTransfer(decimal transferAmount, int transfer_type_id, int transfer_status_id, int account_from, int account_to);
         List<Transfer> ShowUserTransfers(int currentUserId);
+        List<Transfer> ShowUserPendingRequests(int currenUserId);
         Transfer GetTransfer(int transferId);
+        bool UpdateTransferStatus(int transferId, int transferStatus);
         
     }
 }

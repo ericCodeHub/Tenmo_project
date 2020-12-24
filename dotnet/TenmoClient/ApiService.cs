@@ -95,6 +95,25 @@ namespace TenmoClient
 
 
         }
+        public List<Transfer> ShowPendingRequests()
+        {
+            //List<Transfer> list = new List<Transfer>();
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "user/transfers/pending");
+            IRestResponse<List<Transfer>> response = client.Get<List<Transfer>>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                ProcessErrorResponse(response);
+            }
+            else
+            {
+                return response.Data;
+            }
+            return null;
+
+
+        }
 
         public Transfer ShowTransfer(int transferId)
         {
@@ -146,8 +165,22 @@ namespace TenmoClient
             }
             return null;
         }
+        public Transfer UpdateTransferStatus(int transferId, int transferStatus)
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest($"{API_URL}user/transfers/{transferId}/{transferStatus}");
+            IRestResponse<Transfer> response = client.Put<Transfer>(request);
 
-
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                ProcessErrorResponse(response);
+            }
+            else
+            {
+                return response.Data;
+            }
+            return null;
+        }
         public string ProcessErrorResponse(IRestResponse response)
         {
             if (response.ResponseStatus != ResponseStatus.Completed)

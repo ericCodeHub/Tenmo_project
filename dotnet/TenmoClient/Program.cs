@@ -95,62 +95,21 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 2)//show logged in users transfers
                 {
-                    List<Transfer> list = api.ShowTransfers();                    
-                    
-                    int transferId = -1;
-                    while (transferId < 0)
-                    {
-                        Console.WriteLine(ShowUserTransfers(list));
-                        Console.WriteLine("\nEnter Transfer ID to see more details or 0 to return to main Menu: ");
-                        try
-                        {
-                            transferId = int.Parse(Console.ReadLine());
-                        }
-                        catch//if a "non-transfer id" is entered, do this
-                        {
-                            transferId = -1;
-                        }
-                        if (transferId == 0)
-                        {
-                            menuSelection = -1;
-                        }
-                        else if (!list.Any(x => x.TransferId == transferId))
-                        {
-                            transferId = -1;
-
-                        }
-                        else
-                        {
-                            Transfer transfer = api.ShowTransfer(transferId);
-
-                            /*--------------------------------------------
-                    Transfer Details
-                    --------------------------------------------
-                        Id: 23
-                        From: Bernice
-                        To: Me Myselfandi
-                        Type: Send
-                        Status: Approved
-                        Amount: $903.14*/
-
-                            Console.WriteLine("\n--------------------------------------------");
-                            Console.WriteLine("Transfer Details");
-                            Console.WriteLine("--------------------------------------------");
-                            Console.WriteLine($"\tId: {transfer.TransferId}\n\tFrom: {transfer.AccountFromName}" +
-                                              $"\n\tTo: {transfer.AccountToName}\n\tType: {transfer.TransferTypeId}" +
-                                              $"\n\tStatus: {transfer.TransferStatusName}\n\tAmount: {transfer.Amount:C}");
-                            transferId = -1;
-                        }
-                    }
-
-
-
+                    List<Transfer> list = api.ShowTransfers();
+                    string menuMessage = "\nEnter Transfer ID to see more details or 0 to return to main Menu: ";
+                    menuSelection = ShowTransferDetails(menuSelection, list, menuMessage);
 
                 }
                 else if (menuSelection == 3)//view logged in users pending requests
                 {
                     //grab lists of pending requests
                     //use show transfers model but only show pending transfers instead of all transfers
+                    List<Transfer> list = api.ShowPendingRequests();
+
+                    
+                    string menuMessage = "Please enter transfer ID to approve/reject (0 to cancel): ";
+                    menuSelection = ShowTransferDetails(menuSelection, list, menuMessage);
+
                 }
                 else if (menuSelection == 4)//send money to other users
                 {
@@ -263,6 +222,105 @@ namespace TenmoClient
                     menuSelection = -1;
                 }
             }
+        }
+
+        private static int ShowTransferDetails(int menuSelection, List<Transfer> list, string message)
+        {
+            int transferId = -1;
+            while (transferId < 0)
+            {
+                Console.WriteLine(ShowUserTransfers(list));
+                Console.WriteLine(message);
+                try
+                {
+                    transferId = int.Parse(Console.ReadLine());
+                }
+                catch//if a "non-transfer id" is entered, do this
+                {
+                    transferId = -1;
+                }
+                if (transferId == 0)
+                {
+                    menuSelection = -1;
+                }
+                else if (!list.Any(x => x.TransferId == transferId))
+                {
+                    transferId = -1;
+                }
+                else
+                {
+                    if (menuSelection == 2)
+                    {
+                        Console.WriteLine(TransferDetails(transferId));
+                    } else if (menuSelection == 3)
+                    {
+                        Console.WriteLine(PendingRequestDetails(transferId));
+                        int userSelection = int.Parse(Console.ReadLine());//transfer status
+                        do
+                        {
+                            if (userSelection == 0)
+                            {
+                                menuSelection = 3;
+                            }
+                            else if (userSelection == 1)
+                            {
+                                //change transfer status to approved (2)
+                                api.UpdateTransferStatus(transferId, 2);
+                                list.RemoveAt(list.FindIndex(x=> x.TransferId == transferId));
+                                //string recipientUserName = users[users.FindIndex(x => x.UserId == recipient)].Username;
+                            }
+                            else if (userSelection == 2)
+                            {
+                                //change transfer status to rejected (1)
+                                api.UpdateTransferStatus(transferId, 1);
+                                list.RemoveAt(list.FindIndex(x => x.TransferId == transferId));
+                            }
+                            else
+                            {
+                                Console.WriteLine("please enter a valid menu selection");
+                                userSelection = -1;
+                            }
+                        } while (userSelection < 0);
+                    }
+                    
+                    transferId = -1;
+                }
+            }
+
+            return menuSelection;
+        }
+
+        private static string PendingRequestDetails(int transferId)
+        {
+            Transfer transfer = api.ShowTransfer(transferId);
+            string requestInfo = $"requested transfer {transfer.TransferId} of {transfer.Amount:C} to {transfer.AccountToName}";
+            string result = $"1:  Approve {requestInfo}\n2:  Reject {requestInfo}\n0:  Don't approve or reject" ;
+
+            return result;
+
+        }
+
+        private static string TransferDetails(int transferId)
+        {
+            Transfer transfer = api.ShowTransfer(transferId);
+            string result;
+            /*--------------------------------------------
+    Transfer Details
+    --------------------------------------------
+        Id: 23
+        From: Bernice
+        To: Me Myselfandi
+        Type: Send
+        Status: Approved
+        Amount: $903.14*/
+
+            result ="\n--------------------------------------------";
+            result+="\nTransfer Details";
+            result+="\n--------------------------------------------";
+            result+=$"\n\tId: {transfer.TransferId}\n\tFrom: {transfer.AccountFromName}" +
+                    $"\n\tTo: {transfer.AccountToName}\n\tType: {transfer.TransferTypeId}" +
+                    $"\n\tStatus: {transfer.TransferStatusName}\n\tAmount: {transfer.Amount:C}";
+            return result;
         }
 
         private static string ShowUserTransfers(List<Transfer> list)

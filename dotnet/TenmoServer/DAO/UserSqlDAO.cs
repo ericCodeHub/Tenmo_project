@@ -192,7 +192,7 @@ namespace TenmoServer.DAO
                     CurrentBalance = Convert.ToDecimal(cmd.ExecuteScalar());
 
                     //CurrentBalance = CurrentBalance - transactionAmount;
-
+                    //update senders balance
                     cmd = new SqlCommand("UPDATE accounts SET balance = @CurrentBalance WHERE user_id = @currentUserId", conn);
                     cmd.Parameters.AddWithValue("@currentUserId", currentUserId);
                     cmd.Parameters.AddWithValue("@CurrentBalance", CurrentBalance -= transactionAmount);
@@ -296,7 +296,73 @@ namespace TenmoServer.DAO
 
             return transfers;
         }
-        
+        public List<Transfer> ShowUserPendingRequests(int currentUserId)
+        {
+
+            List<Transfer> transfers = new List<Transfer>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(@"SELECT transfer_id, transfer_type_id, ts.transfer_status_id, account_from, account_to, amount, u.user_id, 
+                                                    u.username as accountFrom, (SELECT username FROM users WHERE user_id = account_to) as accountTo,
+                                                    ts.transfer_status_desc
+                                                    FROM transfers t
+                                                    INNER JOIN accounts a ON t.account_from = a.account_id
+                                                    INNER JOIN users u ON a.user_id = u.user_id
+                                                    INNER JOIN transfer_statuses ts ON t.transfer_status_id = ts.transfer_status_id
+                                                    WHERE (account_from = @currentUserId OR account_to = @currentUserId)
+                                                    AND t.transfer_status_id = 1", conn);
+                    cmd.Parameters.AddWithValue("@currentUserId", currentUserId);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            Transfer t = GetTransferFromReader(reader);
+                            transfers.Add(t);
+                        }
+
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+
+            return transfers;
+        }
+        public bool UpdateTransferStatus(int transferId, int transferStatus)
+        {
+            int result;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(@"UPDATE transfers
+                                                    SET transfer_status_id = @transfer_status_id
+                                                    WHERE transfer_id = @transferId", conn);
+                    cmd.Parameters.AddWithValue("@transfer_status_id", transferStatus);
+                    cmd.Parameters.AddWithValue("@transferId", transferId);                  
+
+                    result = cmd.ExecuteNonQuery();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            Transfer transfer = GetTransfer(transferId);
+            TransferFunds(transfer.Amount, transfer.AccountFrom, transfer.AccountTo);
+            return result > 0;
+        }
         private Transfer GetTransferFromReader(SqlDataReader reader)
         {
             Transfer t = new Transfer()
