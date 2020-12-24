@@ -314,7 +314,7 @@ namespace TenmoServer.DAO
                                                     INNER JOIN accounts a ON t.account_from = a.account_id
                                                     INNER JOIN users u ON a.user_id = u.user_id
                                                     INNER JOIN transfer_statuses ts ON t.transfer_status_id = ts.transfer_status_id
-                                                    WHERE (account_from = @currentUserId OR account_to = @currentUserId)
+                                                    WHERE (account_from = @currentUserId)
                                                     AND t.transfer_status_id = 1", conn);
                     cmd.Parameters.AddWithValue("@currentUserId", currentUserId);
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -339,6 +339,7 @@ namespace TenmoServer.DAO
         }
         public bool UpdateTransferStatus(int transferId, int transferStatus)
         {
+            //transferStatus 1 = rejected; 2 = approved
             int result;
             try
             {
@@ -359,8 +360,12 @@ namespace TenmoServer.DAO
             {
                 throw;
             }
-            Transfer transfer = GetTransfer(transferId);
-            TransferFunds(transfer.Amount, transfer.AccountFrom, transfer.AccountTo);
+            if (transferStatus == 2)
+            {
+                Transfer transfer = GetTransfer(transferId);
+                TransferFunds(transfer.Amount, transfer.AccountFrom, transfer.AccountTo);
+            }
+            
             return result > 0;
         }
         private Transfer GetTransferFromReader(SqlDataReader reader)

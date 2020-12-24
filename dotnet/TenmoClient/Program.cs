@@ -88,7 +88,7 @@ namespace TenmoClient
                 {
                     Console.WriteLine("Invalid input. Please enter only a number.");
                 }
-                else if (menuSelection == 1)
+                else if (menuSelection == 1)//show user balance
                 {
                     
                     Console.WriteLine(string.Format("{0:C}", api.GetBalance()));
@@ -114,94 +114,34 @@ namespace TenmoClient
                 else if (menuSelection == 4)//send money to other users
                 {
 
-                    
+
                     /*Console.WriteLine(UserService.GetUserName()); /* this is debugger code that can be deleted once
                     option 5 is completed */
-                    List<User> users =  api.GetUsers();//Get list of users
+                    List<User> users = api.GetUsers();//Get list of users
 
                     users.RemoveAt(UserService.GetUserId() - 1); //remove current user from list of potential recipients
                     string menuMessage = "Please select who you would like to transfer funds to or enter 0 to cancel the transfer: ";
                     int recipient = MenuSelectionOptions(menuMessage, users);
-
-                    if (recipient == 0)
-                    {
-                        Console.WriteLine("transfer canceled");
-                        menuSelection = -1;
-                    }
-                    else
-                    {
-                        //User recipientUser = api.GetUser(users[recipient].Username);
-                        
-                        string recipientUserName = users[users.FindIndex(x => x.UserId == recipient)].Username;
-                        //Console.WriteLine(recipientUser);
-
-                        decimal amountToSend;
-                        do
-                        {
-
-                            Console.Write("Please enter the amount to transfer (0 to cancel): ");
-                            amountToSend = decimal.Parse(Console.ReadLine());
-
-                            if (amountToSend == 0)
-                            {
-                                Console.WriteLine("transaction canceled");
-                                recipient = 0;
-                            }
-                            else if (api.GetBalance() > amountToSend) //check that there is enough money in the account
-                            {
-                                api.SendTeBucks(amountToSend, recipient);//transfer funds
-                                Console.WriteLine($"{amountToSend:C} sent to {recipientUserName}");
-                                
-                            }
-                            else
-                            {
-                                Console.WriteLine("insufficient funds");
-                            }
-                        } while (!(api.GetBalance() > amountToSend));
-                        
-                    }
+                    CreateNewTransfer(ref menuSelection, users, ref recipient);
                 }
                 else if (menuSelection == 5)//request money from other members
                 {
                     List<User> users = api.GetUsers();
                     //remove current user from list of potential recipients
                     users.RemoveAt(UserService.GetUserId() - 1);
-                    string menuMessage = @"Please select who you would like to request funds from or 
-                                           enter 0 to cancel the request: ";
-
+                    string menuMessage = @"Please select who you would like to request funds from or " +
+                                           "enter 0 to cancel the request: ";
                     int sender = MenuSelectionOptions(menuMessage, users);
 
-                    if (sender == 0)
+                    if (sender == 0)//cancels/exits out of current operation
                     {
                         Console.WriteLine("transfer canceled");
                         menuSelection = -1;
                     }
                     else
                     {
-                        //User recipientUser = api.GetUser(users[recipient - 1].Username);
-                        decimal amountToRequest = -1;
-                        do
-                        {
-
-                            Console.Write("Please enter the amount you are requesting (0 to cancel): ");
-                            amountToRequest = decimal.Parse(Console.ReadLine());
-
-                            if (amountToRequest < 0)
-                            {
-                                Console.WriteLine("please enter an amount above {0:C}");
-                                amountToRequest = -1;
-                            }
-                            else if (amountToRequest == 0)
-                            {
-                                Console.WriteLine("transaction canceled");
-                                sender = 0;
-                            }
-                            else  
-                            {
-                                api.RequestTeBucks(amountToRequest, sender);//transfer funds
-                            }
-                            
-                        } while (amountToRequest < 0);
+                        
+                        CreateTransferRequest(ref sender);
 
                     }
 
@@ -224,6 +164,75 @@ namespace TenmoClient
             }
         }
 
+        private static void CreateTransferRequest(ref int sender)
+        {
+            decimal amountToRequest;
+            do
+            {
+                Console.Write("Please enter the amount you are requesting (0 to cancel): ");
+                amountToRequest = decimal.Parse(Console.ReadLine());
+
+                if (amountToRequest < 0)
+                {
+                    Console.WriteLine("please enter an amount above {0:C}");
+                    amountToRequest = -1;
+                }
+                else if (amountToRequest == 0)
+                {
+                    Console.WriteLine("transaction canceled");
+                    sender = 0;
+                }
+                else
+                {
+                    api.RequestTeBucks(amountToRequest, sender);//create transfer request
+                }
+
+            } while (amountToRequest < 0);
+            //return amountToRequest;
+        }
+
+        private static void CreateNewTransfer(ref int menuSelection, List<User> users, ref int recipient)
+        {
+            int recipientId = recipient;
+            if (recipient == 0)
+            {
+                Console.WriteLine("transfer canceled");
+                menuSelection = -1;
+            }
+            else
+            {
+                //User recipientUser = api.GetUser(users[recipient].Username);
+
+                string recipientUserName = users[users.FindIndex(x => x.UserId == recipientId)].Username;
+                //Console.WriteLine(recipientUser);
+
+                decimal amountToSend;
+                do
+                {
+
+                    Console.Write("Please enter the amount to transfer (0 to cancel): ");
+                    amountToSend = decimal.Parse(Console.ReadLine());
+
+                    if (amountToSend == 0)
+                    {
+                        Console.WriteLine("transaction canceled");
+                        recipient = 0;
+                    }
+                    else if (api.GetBalance() > amountToSend) //check that there is enough money in the account
+                    {
+                        api.SendTeBucks(amountToSend, recipient);//transfer funds
+                        Console.WriteLine($"{amountToSend:C} sent to {recipientUserName}");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("insufficient funds");
+                    }
+                } while (!(api.GetBalance() > amountToSend));
+
+            }
+        }
+
         private static int ShowTransferDetails(int menuSelection, List<Transfer> list, string message)
         {
             int transferId = -1;
@@ -239,55 +248,71 @@ namespace TenmoClient
                 {
                     transferId = -1;
                 }
-                if (transferId == 0)
+                if (transferId == 0)//user selects to exit out
                 {
                     menuSelection = -1;
                 }
-                else if (!list.Any(x => x.TransferId == transferId))
+                else if (!list.Any(x => x.TransferId == transferId))//checks for valid entry
                 {
                     transferId = -1;
                 }
-                else
+                else//if transfer exists
                 {
-                    if (menuSelection == 2)
+                    if (menuSelection == 2)//show all transfers
                     {
                         Console.WriteLine(TransferDetails(transferId));
-                    } else if (menuSelection == 3)
+                    } else if (menuSelection == 3)//show pending requests
                     {
                         Console.WriteLine(PendingRequestDetails(transferId));
                         int userSelection = int.Parse(Console.ReadLine());//transfer status
-                        do
-                        {
-                            if (userSelection == 0)
-                            {
-                                menuSelection = 3;
-                            }
-                            else if (userSelection == 1)
-                            {
-                                //change transfer status to approved (2)
-                                api.UpdateTransferStatus(transferId, 2);
-                                list.RemoveAt(list.FindIndex(x=> x.TransferId == transferId));
-                                //string recipientUserName = users[users.FindIndex(x => x.UserId == recipient)].Username;
-                            }
-                            else if (userSelection == 2)
-                            {
-                                //change transfer status to rejected (1)
-                                api.UpdateTransferStatus(transferId, 1);
-                                list.RemoveAt(list.FindIndex(x => x.TransferId == transferId));
-                            }
-                            else
-                            {
-                                Console.WriteLine("please enter a valid menu selection");
-                                userSelection = -1;
-                            }
-                        } while (userSelection < 0);
+                        PendingRequestUpdate(ref menuSelection, list, transferId, ref userSelection);
                     }
-                    
+
                     transferId = -1;
                 }
             }
 
             return menuSelection;
+        }
+
+        private static void PendingRequestUpdate(ref int menuSelection, List<Transfer> list, int transferId, ref int userSelection)
+        {
+            do
+            {
+                if (userSelection == 0)
+                {
+                    menuSelection = 3;
+                }
+                else if (userSelection == 1)
+                {
+                    Transfer transfer = api.ShowTransfer(transferId);
+                    //change transfer status to approved (2)
+                    if (api.GetBalance() > transfer.Amount)//make sure user has funds to approve
+                    {
+                        api.UpdateTransferStatus(transferId, 2);
+                        list.RemoveAt(list.FindIndex(x => x.TransferId == transferId));
+                        //string recipientUserName = users[users.FindIndex(x => x.UserId == recipient)].Username;
+                    }
+                    else
+                    {
+                        Console.WriteLine("insufficient funds; please add funds before approving");
+                        menuSelection = 3;//show list of transfers again
+                    }
+
+                }
+                else if (userSelection == 2)
+                {
+                    //change transfer status to rejected (1)
+                    api.UpdateTransferStatus(transferId, 1);
+                    list.RemoveAt(list.FindIndex(x => x.TransferId == transferId));
+                    if (list.Count == 0) { menuSelection = 3; }
+                }
+                else
+                {
+                    Console.WriteLine("please enter a valid menu selection");
+                    userSelection = -1;
+                }
+            } while (userSelection < 0);
         }
 
         private static string PendingRequestDetails(int transferId)
@@ -317,9 +342,10 @@ namespace TenmoClient
             result ="\n--------------------------------------------";
             result+="\nTransfer Details";
             result+="\n--------------------------------------------";
-            result+=$"\n\tId: {transfer.TransferId}\n\tFrom: {transfer.AccountFromName}" +
+            result += $"\n\tId: {transfer.TransferId}\n\tFrom: {transfer.AccountFromName}" +
                     $"\n\tTo: {transfer.AccountToName}\n\tType: {transfer.TransferTypeId}" +
                     $"\n\tStatus: {transfer.TransferStatusName}\n\tAmount: {transfer.Amount:C}";
+                    
             return result;
         }
 
